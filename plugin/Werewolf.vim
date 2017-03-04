@@ -8,22 +8,25 @@ let g:werewolf_night_themes = get(g:, 'werewolf_night_themes', [])
 let g:werewolf_day_start = get(g:, 'werewolf_day_start', 8)
 let g:werewolf_day_end = get(g:, 'werewolf_day_end', 20)
 let g:werewolf_change_automatically = get(g:, 'werewolf_change_automatically', 1)
+let g:werewolf_day_background = get(g:, 'werewolf_day_background', 'light')
+let g:werewolf_night_background = get(g:, 'werewolf_night_background', 'dark')
 
 let s:werewolf_autocmd_allowed = 0
 
 function! Werewolf()
 	if strftime("%H") >= g:werewolf_day_start && strftime("%H") < g:werewolf_day_end
-		call Werewolf#transform(g:werewolf_night_themes, g:werewolf_day_themes)
+		call Werewolf#transform(g:werewolf_night_themes, g:werewolf_day_themes, g:werewolf_day_background)
 	else
-		call Werewolf#transform(g:werewolf_day_themes, g:werewolf_night_themes)
+		call Werewolf#transform(g:werewolf_day_themes, g:werewolf_night_themes, g:werewolf_night_background)
 	endif
 endfunction
 
-function! Werewolf#transform(current, switch)
+function! Werewolf#transform(current, switch, back)
 	let i = 0
 	while i < len(a:current)
 		if g:colors_name ==# a:current[i]
 			execute "colorscheme " . a:switch[i]
+            execute "set background=" . a:back
 			" if we don't do this check, Werewolf's own ColorScheme autocmd will
 			" run infinitely; this limits when it happens
 			if s:werewolf_autocmd_allowed
@@ -42,7 +45,7 @@ endfunction
 
 function! Werewolf#colorschemeChanged()
 	let s:werewolf_autocmd_allowed = 0
-	call Werewolf#transform(g:werewolf_day_themes + g:werewolf_night_themes, g:werewolf_night_themes + g:werewolf_day_themes)
+	call Werewolf#transform(g:werewolf_day_themes + g:werewolf_night_themes, g:werewolf_night_themes + g:werewolf_day_themes, 'light')
 endfunction
 
 function! Werewolf#autoChange()

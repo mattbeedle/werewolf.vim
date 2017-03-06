@@ -24,7 +24,7 @@ endfunction
 function! Werewolf#transform(current, switch, back)
 	let i = 0
 	while i < len(a:current)
-		if g:colors_name ==# a:current[i]
+		if !exists("g:colors_name") || g:colors_name ==# a:current[i]
 			execute "colorscheme " . a:switch[i]
             execute "set background=" . a:back
 			" if we don't do this check, Werewolf's own ColorScheme autocmd will
